@@ -110,6 +110,44 @@ $(".list-group").on("click", "span", function() {
   dateInput.trigger("focus");
 });
 
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false, 
+  tolerance: "pointer",
+  helper: "clone", 
+
+  activate: function(event) {
+    console.log("activate", this);
+  },
+  deactivate: function(event) {
+    console.log("deactivate", this);
+  },
+  over: function(event) {
+    console.log("over", event.target);
+  },
+  out: function(event) {
+    console.log("out", event.target);
+  },
+
+  update: function(event) {
+    // array to store the task data in
+    var tempArr = [];
+    
+    // loop over current set of children in sortable list
+    $(this).children().each(function() {
+
+    // trim down list's ID to match object property
+    var arrName = $(this)
+    .attr("id")
+    .replace("list-", "");
+
+    // update array on tasks object and save
+    tasks[arrName] = tempArr;
+    saveTasks();
+    });
+  }
+});
+
 // value of date was changed
 $(".list-group").on("blur", "input[type='text']", function() {
   // get current text
@@ -139,6 +177,21 @@ var taskSpan = $("<span>")
 
 // replace input with span element
 $(this).replaceWith(taskSpan);
+});
+
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui) {
+    ui.draggable.remove();
+    console.log("drop");
+  },
+  over: function(event, ui) {
+    console.log("over");
+  },
+  out: function(event, ui) {
+    console.log("out");
+  }
 });
 
 // modal was triggered
